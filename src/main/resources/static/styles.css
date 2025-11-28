@@ -1,0 +1,107 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+    background-color: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    height: 90vh;
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 60px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Left side: UNZA image */
+.image-section {
+    flex: 1;
+    background: url('unza.png') ;
+    background-size: 180%; /* adjust this for zoom */
+    background-color: #f5f5f5;
+    position: relative;
+    border-radius: 40px 0 0 40px;
+}
+
+
+/* Right side: form */
+.results-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 40px;
+}
+
+.results-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    text-align: center;
+}
+
+.results-form img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+}
+
+.results-form h1 {
+    color: #003366;
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+.results-form p {
+    font-size: 16px;
+    color: #444;
+}
+
+.results-form input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.results-form input:focus {
+    border-color: #006600;
+}
+
+.results-form button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.results-form button:hover {
+    background-color: #0a3201;
+}
+.logo {
+    width: 360px;
+    height: 280px;
+    /* object-fit: contain; keeps the image from stretching 
+    margin-bottom: 10px;*/
+}
+

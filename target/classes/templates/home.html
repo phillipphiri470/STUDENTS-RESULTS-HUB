@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>UNZA STUDENT RESULTS HUB</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body class="fade-scale-up">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="nav-title">UNZA RESULTS HUB</span>
+        </div>
+
+        <div class="nav-right">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/help">Help</a>
+            <a href="/loginPage">Log out</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Left image section -->
+        <div class="image-section"></div>
+
+        <!-- Right results form -->
+        <div class="results-section">
+            <form id="pdfForm" class="results-form" action="#" method="get" onsubmit="submitForm(event)">
+              <center><img src="/images.png" alt="UNZA Logo" class="logo"></center>  
+
+                <h1>THE UNIVERSITY OF ZAMBIA<br>STUDENT RESULTS HUB</h1>
+
+                <p>Enter your student number below to download your exam results:</p>
+
+                <input type="text" id="studentNumber" name="studentNumber" placeholder="Enter Student Number" required>
+
+                <button type="submit">Print Results</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const studentNumber = document.getElementById("studentNumber").value;
+
+            fetch(`/pdf/check/${studentNumber}`)
+                .then(response => response.text())
+                .then(result => {
+                    if (result === "Valid") {
+                        window.location.href = `/pdf/generate/${studentNumber}`;
+                    } else {
+                        alert("❌ Invalid Student Number! Please try again.");
+                    }
+                });
+        }
+    </script>
+
+</body>
+</html>

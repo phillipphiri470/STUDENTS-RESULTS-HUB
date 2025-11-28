@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PasswordHashGenerator",
+            "request": "launch",
+            "mainClass": "com.example.pdfGenerator.security.PasswordHashGenerator",
+            "projectName": "pdfGenerator"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PdfGeneratorApplication<pdfGenerator>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.pdfGenerator.PdfGeneratorApplication",
+            "projectName": "pdfGenerator",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=65394 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=pdfGenerator"
+        }
+    ]
+}

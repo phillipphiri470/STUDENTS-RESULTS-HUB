@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>UNZA STUDENT RESULTS HUB - Login</title>
+    <link rel="stylesheet" href="styles1.css">
+</head>
+<body class="fade-in">
+    <div class="container">
+        <form id="loginForm" onsubmit="login(event)" class="login-section">
+            <div class="login-form">
+            <center>
+            <img src="/images.png" alt="logo" width="120" height="120">
+            <h1>UNZA Student Results Hub</h1>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" style="margin-top: 10px;">Login</button></center>
+            <div class="forgot-password?">
+                <a href="./forgotPassword.html">Forgot Password?</a>
+            </div>
+        </div>
+        </form>
+    
+    </div>
+
+<script>
+function login(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.token) {
+            localStorage.setItem("jwtToken", data.token); // Save JWT
+            loadHomePage();
+        } else {
+            alert("Login failed. Enter Correct Data.");
+        }
+    })
+    .catch(err => alert("Error logging in: " + err));
+}
+
+// Fetch protected /home page using JWT
+function loadHomePage() {
+    const token = localStorage.getItem("jwtToken");
+
+    fetch("/home", {
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(response => {
+        if (response.status === 200) {
+            return response.text();
+        } else if (response.status === 403) {
+            throw new Error("Unauthorized. Please login again.");
+        }
+    })
+    .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+    })
+    .catch(err => {
+        alert(err.message);
+        window.location.href = "/loginPage";
+    });
+}
+</script>
+<h3 class="developer"> | Developed By : Phillip Phiri | @ 2025 </h3>
+</body>
+</html>

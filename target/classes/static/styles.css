@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+    background-color: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    display: flex;
+    height: 90vh;
+    width: 100%;
+    max-width: 1100px;
+    border-radius: 60px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Left side: UNZA image */
+.image-section {
+    flex: 1;
+    background: url('unza1.png') no-repeat center center; /* prevents repetition and centers the image */
+    background-size: cover; /* makes sure the image covers the entire container without repeating */
+    background-color: #f5f5f5;
+    position: relative;
+    border-radius: 40px 0 0 40px;
+}
+
+
+
+/* Right side: form */
+.results-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    padding: 40px;
+}
+
+.results-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    text-align: center;
+}
+
+.results-form img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+}
+
+.results-form h1 {
+    color: #003366;
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+.results-form p {
+    font-size: 16px;
+    color: #444;
+}
+
+.results-form input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.results-form input:focus {
+    border-color: #006600;
+}
+
+.results-form button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.results-form button:hover {
+    background-color: #0a3201;
+}
+.logo {
+    width: 360px;
+    height: 280px;
+    /* object-fit: contain; keeps the image from stretching 
+    margin-bottom: 10px;*/
+}
+
+.fade-scale-up {
+    animation: fadeScaleUp 1.0s forwards;
+}
+
+@keyframes fadeScaleUp {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+/* NAVBAR */
+.navbar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 60px;
+    background-color: #003366;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.nav-left .nav-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav-right a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.nav-right a:hover {
+    text-decoration: underline;
+}
+
+/* Ensure page sits below navbar */
+body {
+    padding-top: 70px;
+}
+
+
+
