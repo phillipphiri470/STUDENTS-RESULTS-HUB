@@ -24,14 +24,14 @@ body {
     background-color: #ffffff;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     padding: 40px;
-}
-
-.login-section {
-    flex: 1;
+     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+
+
 
 .login-form {
     width: 100%;
@@ -67,8 +67,18 @@ body {
 #password{
     margin-top: 10px;
 }
-.forgot-password{
-    align-items: right;
+#forgot-password{
+    
+    background-color: #FFBF00;
+     width: 100%;            /* makes each element full width */
+    padding: 3px;
+    font-size: 7px;
+    border-radius: 10px;
+    text-align: center;
+     color: white;
+      border: none;
+    cursor: pointer;
+    
 }
 .fade-in {
     animation: fadeIn 0.6s ease-out;
