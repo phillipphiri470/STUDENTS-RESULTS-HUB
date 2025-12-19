@@ -6,12 +6,14 @@
 }
 
 body {
-    background-color: whitesmoke;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    padding: 20px;
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column; /* stack containers vertically */
+  align-items: center;
+  justify-content: flex-start; /* align from top */
+  min-height: 100vh;
+  padding: 20px;
+  gap: 40px; /* spacing between containers */
 }
 
 .container {
@@ -152,6 +154,17 @@ body {
 body {
     padding-top: 70px;
 }
+/* Hidden by default */
+.container.hidden {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 5.0s ease, transform 5.0s ease;
+}
 
+/* Animate in */
+.container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 
