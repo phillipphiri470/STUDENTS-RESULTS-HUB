@@ -1,68 +1,99 @@
 package com.example.pdfGenerator.controller;
 
-import com.example.pdfGenerator.model.Course;
+import com.example.pdfGenerator.model.LoginCredentials;
 import com.example.pdfGenerator.repository.CourseRepository;
+import com.example.pdfGenerator.repository.UserCredentialsRepo;
+import com.example.pdfGenerator.security.JwtUtil;
 import com.example.pdfGenerator.service.PDFGeneratorService;
+import com.example.pdfGenerator.service.EmailService;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 @Controller
 public class PDFExportController {
 
-    private final PDFGeneratorService pdfGeneratorService;
-    private final CourseRepository courseRepository;
+    private final PDFGeneratorService pdfService;
+    private final CourseRepository courseRepo;
+    private final JwtUtil jwtUtil;
+    private final UserCredentialsRepo userRepo;
+    private final EmailService emailService;
 
-public PDFExportController(PDFGeneratorService pdfGeneratorService, CourseRepository courseRepository) {
-    this.pdfGeneratorService = pdfGeneratorService;
-    this.courseRepository = courseRepository;
-}
+    public PDFExportController(
+            PDFGeneratorService pdfService,
+            CourseRepository courseRepo,
+            JwtUtil jwtUtil,
+            UserCredentialsRepo userRepo,
+            EmailService emailService) {
 
+        this.pdfService = pdfService;
+        this.courseRepo = courseRepo;
+        this.jwtUtil = jwtUtil;
+        this.userRepo = userRepo;
+        this.emailService = emailService;
+    }
 
-    // Home Landing page
-   @GetMapping("/loginPage")
-   public String loginPage(){
-    return "Login";
-   }
-   @GetMapping("/forgotPassword")
-   public String forgotPassword(){
-    return "forgotPassword";
-   }
+    // ✅ Login page endpoint
+    @GetMapping("/loginPage")
+    public String loginPage() {
+        return "Login"; // points to Login.html in templates
+    }
+
     @GetMapping("/home")
     public String home() {
-        return "home"; // looks for home.html in src/main/resources/templates
+        return "home";
     }
 
-    // Get a specific student number
-    @GetMapping("/pdf/generate/{studentNumber}")
-    public void generatePDF(@PathVariable String studentNumber, HttpServletResponse response) throws IOException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-        String currentDateTime = dateFormatter.format(new Date());
+    @GetMapping("/pdf/check")
+    @ResponseBody
+    public ResponseEntity<String> checkStudent(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
 
-        String HeaderKey = "Content-Disposition";
-        String HeaderValue = "attachment; filename=exam_results_" + studentNumber + "_" + currentDateTime + ".pdf";
-        response.setHeader(HeaderKey, HeaderValue);
+        String studentNumber = extractUsername(authHeader);
 
-        this.pdfGeneratorService.export(response, studentNumber);
+        if (courseRepo.findByStudentNumber(studentNumber).isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid");
+        }
+        return ResponseEntity.ok("Valid");
     }
-   // checks to see if student number is valid 
-    @GetMapping("/pdf/check/{studentNumber}")
-    public ResponseEntity<String> checkStudent(@PathVariable String studentNumber) {
-    List<Course> courses = courseRepository.findByStudentNumber(studentNumber);
-    if (courses.isEmpty()) {
-        return ResponseEntity.badRequest().body("Invalid student number");
-    }
-    return ResponseEntity.ok("Valid");
+
+    // Example snippet (already in your code)
+@GetMapping("/pdf/generate")
+public void generatePDF(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+        HttpServletResponse response) throws Exception {
+
+    String studentNumber = extractUsername(authHeader);
+    pdfService.export(response, studentNumber);
 }
 
+
+    @PostMapping("/pdf/email")
+    @ResponseBody
+    public String emailResults(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+
+        String studentNumber = extractUsername(authHeader);
+
+        LoginCredentials user = userRepo.findByUsername(studentNumber)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            byte[] pdfBytes = pdfService.generatePdfBytes(studentNumber);
+            emailService.sendResults(user.getEmail(), pdfBytes);
+            return "✅ Results successfully sent to " + user.getEmail();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "❌ Failed to send results email.";
+        }
+    }
+
+    private String extractUsername(String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return jwtUtil.extractUsername(token);
+    }
 }

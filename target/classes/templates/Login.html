@@ -44,7 +44,10 @@ function login(event) {
     .then(response => response.json())
     .then(data => {
         if (data.token) {
-            localStorage.setItem("jwtToken", data.token); // Save JWT
+            // ✅ Save JWT
+            localStorage.setItem("jwtToken", data.token);
+
+            // ✅ Load home page using existing logic
             loadHomePage();
         } else {
             alert("Login failed. Enter Correct Data.");
@@ -56,6 +59,11 @@ function login(event) {
 // Fetch protected /home page using JWT
 function loadHomePage() {
     const token = localStorage.getItem("jwtToken");
+    if (!token) {
+        alert("❌ You must login first.");
+        window.location.href = "/loginPage";
+        return;
+    }
 
     fetch("/home", {
         headers: { "Authorization": "Bearer " + token }
@@ -68,16 +76,19 @@ function loadHomePage() {
         }
     })
     .then(html => {
+        // ✅ Open home page content
         document.open();
         document.write(html);
         document.close();
     })
     .catch(err => {
-        alert(err.message);
+        console.error(err);
+        alert("❌ " + err.message);
         window.location.href = "/loginPage";
     });
 }
 </script>
+
 <h3 class="developer"> | Developed By : Phillip Phiri | @ 2025 </h3>
 </body>
 </html>
