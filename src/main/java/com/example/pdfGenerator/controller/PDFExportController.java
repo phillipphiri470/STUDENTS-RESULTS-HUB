@@ -1,8 +1,10 @@
 package com.example.pdfGenerator.controller;
 
 import com.example.pdfGenerator.model.LoginCredentials;
+import com.example.pdfGenerator.model.BioData; // 🔽 ADDED
 import com.example.pdfGenerator.repository.CourseRepository;
 import com.example.pdfGenerator.repository.UserCredentialsRepo;
+import com.example.pdfGenerator.repository.BioDataRepository; // 🔽 ADDED
 import com.example.pdfGenerator.security.JwtUtil;
 import com.example.pdfGenerator.service.PDFGeneratorService;
 import com.example.pdfGenerator.service.EmailService;
@@ -10,6 +12,7 @@ import com.example.pdfGenerator.service.EmailService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model; // 🔽 ADDED
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,29 +25,42 @@ public class PDFExportController {
     private final JwtUtil jwtUtil;
     private final UserCredentialsRepo userRepo;
     private final EmailService emailService;
+    private final BioDataRepository bioDataRepo; // 🔽 ADDED
 
     public PDFExportController(
             PDFGeneratorService pdfService,
             CourseRepository courseRepo,
             JwtUtil jwtUtil,
             UserCredentialsRepo userRepo,
-            EmailService emailService) {
+            EmailService emailService,
+            BioDataRepository bioDataRepo) { // 🔽 ADDED
 
         this.pdfService = pdfService;
         this.courseRepo = courseRepo;
         this.jwtUtil = jwtUtil;
         this.userRepo = userRepo;
         this.emailService = emailService;
+        this.bioDataRepo = bioDataRepo; // 🔽 ADDED
     }
 
     // ✅ Login page endpoint
     @GetMapping("/loginPage")
     public String loginPage() {
-        return "Login"; // points to Login.html in templates
+        return "Login";
     }
 
+    // 🔽 UPDATED (but not breaking)
     @GetMapping("/home")
-    public String home() {
+    public String home(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            Model model) {
+
+        String studentNumber = extractUsername(authHeader);
+
+        BioData bio = bioDataRepo.findByStudentNumber(studentNumber);
+
+        model.addAttribute("bio", bio);
+
         return "home";
     }
 
@@ -61,16 +77,14 @@ public class PDFExportController {
         return ResponseEntity.ok("Valid");
     }
 
-    // Example snippet (already in your code)
-@GetMapping("/pdf/generate")
-public void generatePDF(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
-        HttpServletResponse response) throws Exception {
+    @GetMapping("/pdf/generate")
+    public void generatePDF(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader,
+            HttpServletResponse response) throws Exception {
 
-    String studentNumber = extractUsername(authHeader);
-    pdfService.export(response, studentNumber);
-}
-
+        String studentNumber = extractUsername(authHeader);
+        pdfService.export(response, studentNumber);
+    }
 
     @PostMapping("/pdf/email")
     @ResponseBody

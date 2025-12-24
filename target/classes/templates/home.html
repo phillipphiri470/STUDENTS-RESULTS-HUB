@@ -87,9 +87,32 @@
     <p>If you're having trouble accessing your results either by download or by email, please contact the registrar's office or email support@unza.edu.zm.</p>
   </div>
 </div>
-<footer class="footer">
-    <p>&copy; Developed By : Phillip Phiri | 2025</p>
-</footer>
+
+
+<!-- Bio Data div -->
+
+<!-- Bio Data two-column layout -->
+<div class="bio-container">
+    <!-- Left block -->
+    <div class="bio-data-section">
+        <h2 style="color: #003366;">Bio Data</h2>
+        
+        <div style="color: #006600;">
+            <p><strong>Student Number:</strong> <span style="color: black;" th:text="${bio.studentNumber}"></span></p>
+            <p><strong>First Name:</strong> <span style="color: black;" th:text="${bio.fname}"></span></p>
+            <p><strong>Last Name:</strong> <span style="color: black;" th:text="${bio.lname}"></span></p>
+            <p><strong>Programme:</strong> <span style="color: black;" th:text="${bio.programme}"></span></p>
+            <p><strong>Current Year of Study:</strong> <span style="color: black;" th:text="${bio.currentYearOfStudy}"></span></p>
+        </div>
+    </div>
+
+    <!-- Right block -->
+    <div class="other-section">
+        <h2>Additional Info</h2>
+        <p>.</p>
+    </div>
+</div>
+
 
 <script>
     // ✅ Get JWT from localStorage
@@ -178,6 +201,8 @@ window.onclick = function(event) {
   });
 };
 </script>
-
+<footer class="footer">
+    <p>&copy; Developed By : Phillip Phiri | 2025</p>
+</footer>
 </body>
 </html>
