@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(requests -> requests
-                        .antMatchers("/auth/**", "/loginPage", "/styles1.css", "/images.png", "/forgotPassword", "/send-email", "/pdf/email").permitAll()
+                        .antMatchers("/auth/**", "/loginPage", "/styles1.css", "/images.png", "/forgotPassword", "/send-email", "/pdf/email", "/home").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

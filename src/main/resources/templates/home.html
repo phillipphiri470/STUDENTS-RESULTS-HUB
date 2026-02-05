@@ -6,46 +6,203 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
-<body>
+<body class="fade-scale-up">
 
-    <div class="container">
+<nav class="navbar">
+    <div class="nav-left">
+        <span class="nav-title">UNZA STUDENT RESULTS HUB</span>
+    </div>
+    <div class="nav-right">
+        <a href="/loginPage">Home</a>
+        <a href="#" onclick="openModal('aboutModal')">About</a>
+        <a href="#" onclick="openModal('helpModal')">Help</a>
+        <a href="/loginPage" onclick="logout()">Log out</a>
+    </div>
+</nav>
 
-        <!-- Left image section -->
-        <div class="image-section"></div>
+<div class="container">
+    <div class="image-section"></div>
 
-        <!-- Right results form -->
-        <div class="results-section">
-            <form id="pdfForm" class="results-form" action="#" method="get" onsubmit="submitForm(event)">
-              <center><img src="/images.png" alt="UNZA Logo" class="logo"></center>  
+    <div class="results-section">
+    <div class="results-form">
+        <img  src="/images.png" alt="UNZA Logo" class="logo">
+        
+        <h1>THE UNIVERSITY OF ZAMBIA<br>STUDENT RESULTS HUB</h1>
+        
+        <p>Click the button below to download your exam results:</p>
 
-                <h1>UNIVERSITY OF ZAMBIA<br>STUDENT RESULTS HUB</h1>
+        <button class="results-form button" onclick="printResults()">Print Results</button>
+        
+        <hr>
+        
+        <p>Click the button below to have your results emailed to you</p>
+        
+        <button class="results-form button" onclick="emailResults()">Email Results</button>
+    
+    </div>
+</div>
 
-                <p>Enter your student number below to download your exam results:</p>
+            
+    </div>
+</div>
 
-                <input type="text" id="studentNumber" name="studentNumber" placeholder="Enter Student Number" required>
+<!-- About Modal -->
+<div id="aboutModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('aboutModal')">&times;</span>
+    <center>
+        <h1>About </h1>  
+     <p>
+            The UNZA Student Results Hub allows registered students to securely access, download, 
+            and email their exam results directly from the University of Zambia database.
+        </p>
+    </center> 
+        <h2>Features</h2>
+        <ul>
+            <li>Secure login with username and password</li>
+            <li>Download exam results as PDF</li>
+            <li>Email exam results directly to your registered email</li>
+            <li>Responsive and easy-to-use interface</li>
+        </ul>
 
-                <button type="submit">Print Results</button>
-            </form>
+        <h2>How to Use</h2>
+        <ol>
+            <li>Login with your student credentials.</li>
+            <li>Click on “Print Results” to download your PDF.</li>
+            <li>Click on “Email Results” to receive a copy in your email.</li>
+        </ol>
+
+        <h2>Developer</h2>
+        <p>Developed by Phillip Phiri | @ 2025</p>
+    
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('helpModal')">&times;</span>
+    <h2>Help</h2>
+    
+    <p>If you're having trouble accessing your results either by download or by email, please contact the registrar's office or email support@unza.edu.zm.</p>
+  </div>
+</div>
+
+
+<!-- Bio Data div -->
+
+<!-- Bio Data two-column layout -->
+<div class="bio-container">
+    <!-- Left block -->
+    <div class="bio-data-section">
+        <h2 style="color: #003366;">Bio Data</h2>
+        
+        <div style="color: #006600;">
+            <p><strong>Student Number:</strong> <span style="color: black;" th:text="${bio.studentNumber}"></span></p>
+            <p><strong>First Name:</strong> <span style="color: black;" th:text="${bio.fname}"></span></p>
+            <p><strong>Last Name:</strong> <span style="color: black;" th:text="${bio.lname}"></span></p>
+            <p><strong>Programme:</strong> <span style="color: black;" th:text="${bio.programme}"></span></p>
+            <p><strong>Current Year of Study:</strong> <span style="color: black;" th:text="${bio.currentYearOfStudy}"></span></p>
         </div>
-
     </div>
 
-    <script>
-        function submitForm(event) {
-            event.preventDefault();
-            const studentNumber = document.getElementById("studentNumber").value;
+    <!-- Right block -->
+    <div class="other-section">
+        <h2>Additional Info</h2>
+        <p>.</p>
+    </div>
+</div>
 
-            fetch(`/pdf/check/${studentNumber}`)
-                .then(response => response.text())
-                .then(result => {
-                    if (result === "Valid") {
-                        window.location.href = `/pdf/generate/${studentNumber}`;
-                    } else {
-                        alert("❌ Invalid Student Number! Please try again.");
-                    }
-                });
+
+<script>
+    // ✅ Get JWT from localStorage
+    function getToken() {
+        const token = localStorage.getItem("jwtToken");
+        if (!token) {
+            alert("❌ You must login first.");
+            window.location.href = "/loginPage";
         }
-    </script>
+        return token;
+    }
 
+    // 1️⃣ Print PDF in new tab
+    // 1️⃣ Print / Download PDF without opening a new tab
+function printResults() {
+    const token = getToken();
+    fetch("/pdf/check", {
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(res => res.text())
+    .then(result => {
+        if (result === "Valid") {
+            // Fetch the PDF bytes
+            fetch("/pdf/generate", {
+                method: "GET",
+                headers: { "Authorization": "Bearer " + token }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to fetch PDF");
+                return res.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "exam_results.pdf"; // File name
+                a.click();
+                window.URL.revokeObjectURL(url); // Clean up
+            })
+            .catch(err => alert("❌ Error downloading PDF: " + err));
+        } else {
+            alert("❌ No results found for your account.");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("❌ Error checking results.");
+    });
+}
+
+
+    // 2️⃣ Email results
+    function emailResults() {
+        const token = getToken();
+        fetch("/pdf/email", {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + token }
+        })
+        .then(res => res.text())
+        .then(msg => alert(msg))
+        .catch(err => {
+            console.error(err);
+            alert("❌ Failed to send results email.");
+        });
+    }
+
+    // 3️⃣ Logout
+    function logout() {
+        localStorage.removeItem("jwtToken");
+    }
+    function openModal(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+// Optional: Close modal when clicking outside
+window.onclick = function(event) {
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+};
+</script>
+<footer class="footer">
+    <p>&copy; Developed By : Phillip Phiri | 2025</p>
+</footer>
 </body>
 </html>
